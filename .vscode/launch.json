@@ -1,0 +1,153 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": 
+    [
+
+        {
+            "type": "cppvsdbg",
+            "request": "launch",
+            "name": "(Win)Debug unit tests in library 'multi-party-ecdsa'",
+            "program": "${workspaceRoot}/target/debug/multi_party_ecdsa-6e1c60a6b028d0ac.exe",
+            "cwd": "${workspaceRoot}",
+            "args": [
+                //"test",
+                //"-p", 
+                //"multi-party-ecdsa",
+                // "--lib",
+                // "protocols::multi_party_ecdsa::gg_2018::test::tests::test_keygen_t2_n4",
+                // "--",
+                // "--exact",
+                "test_keygen_t2_n3",
+                
+                "test_keygen_t2_n4",
+            ],
+
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'multi-party-ecdsa'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=multi-party-ecdsa"
+                ],
+                "filter": {
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug test 'keygen_integ_test'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--test=keygen_integ_test",
+                    "--package=multi-party-ecdsa"
+                ],
+                "filter": {
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in test 'keygen_integ_test'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--test=keygen_integ_test",
+                    "--package=multi-party-ecdsa"
+                ],
+                "filter": {
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug test 'signing_integ_test'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--test=signing_integ_test",
+                    "--package=multi-party-ecdsa"
+                ],
+                "filter": {
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in test 'signing_integ_test'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--test=signing_integ_test",
+                    "--package=multi-party-ecdsa"
+                ],
+                "filter": {
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug benchmark 'keygen'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bench=keygen",
+                    "--package=multi-party-ecdsa"
+                ],
+                "filter": {
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in benchmark 'keygen'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bench=keygen",
+                    "--package=multi-party-ecdsa"
+                ],
+                "filter": {
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
