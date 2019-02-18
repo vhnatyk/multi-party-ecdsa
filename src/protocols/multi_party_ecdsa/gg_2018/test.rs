@@ -66,15 +66,15 @@ mod tests {
             .collect::<Vec<Keys>>();
 
         let mut bc1_vec = Vec::new();
-        let mut blind_vec = Vec::new();
+        let mut decom_vec = Vec::new();
         for i in 0..n.clone() {
-            let (bc1, blind) = party_keys_vec[i].phase1_broadcast_phase3_proof_of_correct_key();
+            let (bc1, decom1) = party_keys_vec[i].phase1_broadcast_phase3_proof_of_correct_key();
             bc1_vec.push(bc1);
-            blind_vec.push(blind);
+            decom_vec.push(decom1);
         }
 
         let y_vec = (0..n.clone())
-            .map(|i| party_keys_vec[i].y_i.clone())
+            .map(|i| decom_vec[i].y_i.clone())
             .collect::<Vec<GE>>();
         let mut y_vec_iter = y_vec.iter();
         let head = y_vec_iter.next().unwrap();
@@ -86,7 +86,7 @@ mod tests {
         for i in 0..n.clone() {
             let (vss_scheme, secret_shares, index) = party_keys_vec[i]
                 .phase1_verify_com_phase3_verify_correct_key_phase2_distribute(
-                    &parames, &blind_vec, &y_vec, &bc1_vec,
+                    &parames, &decom_vec, &bc1_vec,
                 )
                 .expect("invalid key");
             vss_scheme_vec.push(vss_scheme);
@@ -186,11 +186,11 @@ mod tests {
 
         // each party computes [Ci,Di] = com(g^gamma_i) and broadcast the commitments
         let mut bc1_vec = Vec::new();
-        let mut blind_vec1 = Vec::new();
+        let mut decommit_vec1 = Vec::new();
         for i in 0..ttag.clone() {
-            let (com, blind) = sign_keys_vec[i].phase1_broadcast();
+            let (com, decommit_phase_1) = sign_keys_vec[i].phase1_broadcast();
             bc1_vec.push(com);
-            blind_vec1.push(blind);
+            decommit_vec1.push(decommit_phase_1);
         }
 
         // each party i sends encryption of k_i under her Paillier key
@@ -311,14 +311,8 @@ mod tests {
                         &b_gamma_vec[0].b_proof
                     })
                     .collect::<Vec<&DLogProof>>();
-                let R = SignKeys::phase4(
-                    &delta_inv,
-                    &b_proof_vec,
-                    &blind_vec1,
-                    &g_gamma_i_vec,
-                    &bc1_vec,
-                )
-                .expect("bad gamma_i decommit");
+                let R = SignKeys::phase4(&delta_inv, &b_proof_vec, decommit_vec1.clone(), &bc1_vec)
+                    .expect("bad gamma_i decommit");
                 R
             })
             .collect::<Vec<GE>>();

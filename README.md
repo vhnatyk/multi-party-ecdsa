@@ -16,20 +16,36 @@ This library can be used to create MultiSig and ThresholdSig crypto wallet.
 
 Project Status
 -------
-* The library supports **2p-ecdsa** based on Lindell's crypto 2017 paper [1]. This implementation is being used as part of KMS-secp256k1 repo (https://github.com/KZen-networks/kms-secp256k1) for distributed key management. 
+* The library supports **2p-ecdsa** based on Lindell's crypto 2017 paper [1]. Project [Gotham-city](https://github.com/KZen-networks/gotham-city) is a proof of concept for a full two-party Bitcoin wallet that uses this library. See benchmarks and white paper there.
 
-* The library supports Gennaro and Goldfeder ccs 2018 protocol [2] for **{t,n}-threshold ECDSA**. The updated code can be found in a different branch: https://github.com/KZen-networks/multi-party-ecdsa/tree/pdl-sub-protocol/src/protocols/multi_party_ecdsa/gg_2018 and it is not yet benchmarked.  
+* The library supports Gennaro and Goldfeder CCS 2018 protocol [2] for **{t,n}-threshold ECDSA**. 
 
-* Note - the code is not fully audited yet.
-
-Performance
+Run
 -------
-for two party key generation: 
-* _Provider:_ EC2 AWS, _bench_: self::bench_full_keygen_party_one_two.
+The following steps are for setup, key generation with `n` parties and signing with `t+1` parties. 
 
-| Feature    | Model     | vCPU | Mem (GiB) | SSD Storage (GB) | Dedicated EBS Bandwidth (Mbps) | Bench                                   |
-|------------|-----------|------|-----------|------------------|--------------------------------|-----------------------------------------|
-| **Keygen** | m4.xlarge | 4    | 16        | 28               | 750                            | 1,528,965,676 ns/iter (+/- 195,059,290) |
+**Setup** 
+1) We use shared state machine architecture (see [white city](https://github.com/KZen-networks/white-city)). The parameters `parties` and `threshold` can be configured by changing the file: `param`. a keygen will run with `parties` parties and signing will run with any subset of `threshold + 1` parties. `param` file should be located in the same path of the client softwares.
+2) Install [Rust](https://www.rust-lang.org/en-US/install.html),[Nightly Rust](https://doc.rust-lang.org/1.5.0/book/nightly-rust.html).  Run `cargo build --release` ( it will build into `/target/release`)
+3) Run the shared state machine: `./sm_manager`. Currently configured to be in `127.0.0.1:8001`, this can be changed in `Rocket.toml` file. The `Rocket.toml` file should be in the same folder you run `sm_manager` from. 
+
+**KeyGen**
+
+run `gg18_keygen_client` as follows: `./gg18_keygen_client http://127.0.0.1:8001 keys.store`. Replace IP and port with the ones configured in setup. Once `n` parties join the application will run till finish. At the end each party will get a local keys file `keys.store` (change filename in command line). This contain secret and public data of the party after keygen. The file therefore should remain private. 
+
+**Sign**
+
+Run `./gg18_sign_client`. The application should be in the same folder as the `keys.store` file (or custom filename generated in keygen). the application takes three arguments: `IP:port` as in keygen, `filename` and message to be signed: `./gg18_sign_client http://127.0.0.1:8001 keys.store "KZen Networks"`. The same message should be used by all signers. Once `t+1` parties join the protocol will run and will output to screen signatue (R,s). 
+
+**Full demo**
+
+Run `./run.sh` (located in `/demo` folder) in the same folder as the excutables (usually `/target/release`). It will spawn a shared state machine, clients in the number of parties and signing requests for the `threshold + 1` first parties.
+
+
+
+|![Demo](https://raw.githubusercontent.com/KZen-networks/multi-party-ecdsa/master/demo/MP-ECDSA%20demo.gif "Multiparty ECDSA Demo")|
+|:--:| 
+| *A 5 parties setup with 3 signers (threshold = 2)* |
 
 
 Contributions & Development Process
@@ -49,4 +65,4 @@ References
 
 [1] https://eprint.iacr.org/2017/552.pdf
 
-[2] http://stevengoldfeder.com/papers/GG18.pdf
+[2] https://eprint.iacr.org/2019/114.pdf
