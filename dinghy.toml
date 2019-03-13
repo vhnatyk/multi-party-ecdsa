@@ -1,0 +1,21 @@
+## it's safer to use this crate-type output on devices
+## on iOS it seems required? and 
+## on Android using LLVM in 19+ NDK dynamic .so libraries, if present in folder, 
+## are always preffered over static .a files, regardless of settings
+[lib]
+crate-type = ["staticlib", "rlib"]
+
+## this may be helpful for passing various flags to rustc/linker/cargo/compiler
+# [build]
+# rustflags = [
+#     "-C", "link-args=-lgcc",
+#     "-C", "link-args=-lcompiler_rt-extras",
+#     "-C", "link-args=-lclang_rt.builtins-aarch64-android",
+#     ]
+
+## unfortunately overrides in this file should work, but they don't :( possible bug in dinghy/cargo?
+## at this point cargo.lock already created so all dependencies are already set so
+## dependency overriding seems doesn't work as expected
+# [patch.crates-io]
+# rust-crypto = { git = "https://github.com/vhnatyk/rust-crypto", branch="aarch64" }
+
