@@ -199,8 +199,8 @@ impl Keys {
         bc1_vec: &Vec<KeyGenBroadcastMessage1>,
     ) -> Result<(VerifiableSS, Vec<FE>, usize), Error> {
         // test length:
-        assert_eq!(decom_vec.len(), params.share_count);
-        assert_eq!(bc1_vec.len(), params.share_count);
+        //assert_eq!(decom_vec.len(), params.share_count);
+        //assert_eq!(bc1_vec.len(), params.share_count);
         // test paillier correct key and test decommitments
         let correct_key_correct_decom_all = (0..bc1_vec.len())
             .map(|i| {
@@ -228,9 +228,9 @@ impl Keys {
         vss_scheme_vec: &Vec<VerifiableSS>,
         index: &usize,
     ) -> Result<(SharedKeys, DLogProof), Error> {
-        assert_eq!(y_vec.len(), params.share_count);
-        assert_eq!(secret_shares_vec.len(), params.share_count);
-        assert_eq!(vss_scheme_vec.len(), params.share_count);
+        //assert_eq!(y_vec.len(), params.share_count);
+        //assert_eq!(secret_shares_vec.len(), params.share_count);
+        //assert_eq!(vss_scheme_vec.len(), params.share_count);
 
         let correct_ss_verify = (0..y_vec.len())
             .map(|i| {
@@ -288,8 +288,8 @@ impl Keys {
         dlog_proofs_vec: &Vec<DLogProof>,
         y_vec: &Vec<GE>,
     ) -> Result<(), Error> {
-        assert_eq!(y_vec.len(), params.share_count);
-        assert_eq!(dlog_proofs_vec.len(), params.share_count);
+        //assert_eq!(y_vec.len(), params.share_count);
+        //assert_eq!(dlog_proofs_vec.len(), params.share_count);
         let xi_dlog_verify = (0..y_vec.len())
             .map(|i| DLogProof::verify(&dlog_proofs_vec[i]).is_ok())
             .all(|x| x == true);
@@ -396,8 +396,8 @@ impl SignKeys {
 
     pub fn phase2_delta_i(&self, alpha_vec: &Vec<FE>, beta_vec: &Vec<FE>) -> FE {
         let vec_len = alpha_vec.len();
-        assert_eq!(alpha_vec.len(), beta_vec.len());
-        // assert_eq!(alpha_vec.len(), self.s.len() - 1);
+        //assert_eq!(alpha_vec.len(), beta_vec.len());
+        // //assert_eq!(alpha_vec.len(), self.s.len() - 1);
         let ki_gamma_i = self.k_i.mul(&self.gamma_i.get_element());
         let sum = (0..vec_len)
             .map(|i| alpha_vec[i].add(&beta_vec[i].get_element()))
@@ -407,8 +407,8 @@ impl SignKeys {
 
     pub fn phase2_sigma_i(&self, miu_vec: &Vec<FE>, ni_vec: &Vec<FE>) -> FE {
         let vec_len = miu_vec.len();
-        assert_eq!(miu_vec.len(), ni_vec.len());
-        //assert_eq!(miu_vec.len(), self.s.len() - 1);
+        //assert_eq!(miu_vec.len(), ni_vec.len());
+        ////assert_eq!(miu_vec.len(), self.s.len() - 1);
         let ki_w_i = self.k_i.mul(&self.w_i.get_element());
         let sum = (0..vec_len)
             .map(|i| miu_vec[i].add(&ni_vec[i].get_element()))
@@ -523,7 +523,7 @@ impl LocalSignature {
         v_i: &GE,
         R: &GE,
     ) -> Result<(Phase5Com2, Phase5DDecom2), Error> {
-        assert_eq!(decom_vec.len(), com_vec.len());
+        //assert_eq!(decom_vec.len(), com_vec.len());
 
         let g: GE = ECPoint::generator();
         let test_com_elgamal = (0..com_vec.len())
@@ -600,8 +600,8 @@ impl LocalSignature {
         com_vec2: &Vec<Phase5Com2>,
         decom_vec1: &Vec<Phase5ADecom1>,
     ) -> Result<FE, Error> {
-        assert_eq!(decom_vec2.len(), decom_vec1.len());
-        assert_eq!(decom_vec2.len(), com_vec2.len());
+        //assert_eq!(decom_vec2.len(), decom_vec1.len());
+        //assert_eq!(decom_vec2.len(), com_vec2.len());
 
         let test_com = (0..com_vec2.len())
             .map(|i| {

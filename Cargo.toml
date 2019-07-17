@@ -20,12 +20,23 @@ repository = "https://github.com/KZen-networks/multi-party-ecdsa"
 license = "GPL-3.0-or-later"
 categories = ["cryptography"]
 
+[build]
+panic = "abort"
+
 [lib]
-crate-type = ["lib"]
+crate-type = ["lib", "staticlib"]
 
 [dependencies]
-paillier = { git = "https://github.com/KZen-networks/rust-paillier"}
-zk-paillier = { git = "https://github.com/KZen-networks/zk-paillier"}
+# std = { path = "./lib-minstd" }
+# paillier = { git = "https://github.com/KZen-networks/rust-paillier"}
+# zk-paillier = { git = "https://github.com/KZen-networks/zk-paillier"}
+# paillier = { path = "../../../rust-paillier"}
+# zk-paillier = { path="../../../zk-paillier"}
+# centipede = { path="../../../centipede"}
+paillier = { git = "https://github.com/vhnatyk/rust-paillier", branch = "vhnat/mpecdsa-core" }
+zk-paillier = { git = "https://github.com/vhnatyk/zk-paillier" }
+centipede = { git = "https://github.com/vhnatyk/centipede"}
+
 
 
 hex = "0.3.2"
@@ -33,26 +44,41 @@ subtle = {version = "2", features = ["nightly"]}
 serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"
-reqwest = "0.9.5"
-rocket = "0.4.0"
-rocket_contrib = "0.4.0"
+# reqwest = "0.9.5"
+# rocket = "0.4.0"
+# rocket_contrib = "0.4.0"
 uuid = { version = "0.7", features = ["v4"] }
-rust-crypto = "^0.2"
+# rust-crypto = "^0.2"
+# cryptoxide="0.1.1"
+# curv = { version = "0.1.0", features = ["ec_secp256k1"], path = "C:/Projects/Repos/Kzen/curv" }
+curv = { version = "0.1.0", features = ["ec_secp256k1"], git = "https://github.com/vhnatyk/curv", branch="vhnat/mpecdsa_core_extraction" }
 
-[dependencies.curv]
-git = "https://github.com/KZen-networks/curv"
-features =  ["ec_secp256k1"]
 
-[dependencies.centipede]
-git = "https://github.com/KZen-networks/centipede"
 
-[patch.crates-io]
-rust-gmp = { version = "0.5.0", features = ["serde_support"], git = "https://github.com/KZen-networks/rust-gmp" }
+# [dependencies.curv]
+# # git = "https://github.com/KZen-networks/curv"
+# path = "../../curv"
+# features =  ["ec_secp256k1"]
+
+# [dependencies.centipede]
+# git = "https://github.com/KZen-networks/centipede"
+
+[patch."https://github.com/KZen-networks/rust-gmp"]
+rust-gmp = { path="C:/Projects/Repos/rust-gmp_kzen" }
+# rust-gmp = { version = "0.5.0", features = ["serde_support"], git = "https://github.com/KZen-networks/rust-gmp" }
+# std = { path = "./lib-minstd" }
+
 
 [dev-dependencies]
 criterion = "0.2"
+
+[build-dependencies]
+cc = "1.0"
 
 [[bench]]
 name = "keygen"
 path = "benches/multi_party_ecdsa/gg18/keygen.rs"
 harness = false
+
+# [replace]
+# rand={version= "0.6.5"}
