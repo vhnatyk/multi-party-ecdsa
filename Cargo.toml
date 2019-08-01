@@ -71,6 +71,9 @@ rust-gmp = { path="C:/Projects/Repos/rust-gmp_kzen" }
 [patch."https://github.com/vhnatyk/rust-secp256k1"]
 secp256k1 = { version = "0.13.1", features = ["rand", "serde"], path="C:/Projects/Repos/rust-secp256k1" }
 
+[patch."https://github.com/vhnatyk/curv"]
+curv = { path="C:/Projects/Repos/kzen/curv" }
+
 
 [dev-dependencies]
 criterion = "0.2"
