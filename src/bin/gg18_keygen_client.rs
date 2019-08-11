@@ -83,7 +83,7 @@ fn main() {
 
     let client = Client::new();
     // delay:
-    let delay = time::Duration::from_millis(25);
+    let delay = time::Duration::from_millis((10 * PARTIES) as u64);
     let parames = Parameters {
         threshold: THRESHOLD as usize,
         share_count: PARTIES as usize,
