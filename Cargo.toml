@@ -43,7 +43,7 @@ features = ["ec_secp256k1"]
 
 [dev-dependencies]
 serde_json = "1.0"
-libsecp256k1 = "0.3.2"
+libsecp256k1 = "0.3.5"
 
 [patch.crates-io]
 rust-gmp = { version = "0.5.0", features = ["serde_support"], git = "https://github.com/KZen-networks/rust-gmp" }
