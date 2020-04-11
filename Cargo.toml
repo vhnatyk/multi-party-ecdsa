@@ -28,65 +28,20 @@ categories = ["cryptography"]
 [lib]
 crate-type = ["lib", "staticlib"]
 
-[features]
-cclst = ["class_group"]
-
 [dependencies]
-# std = { path = "./lib-minstd" }
-# paillier = { git = "https://github.com/KZen-networks/rust-paillier"}
-# zk-paillier = { git = "https://github.com/KZen-networks/zk-paillier"}
-# paillier = { path = "../../../rust-paillier"}
-# zk-paillier = { path="../../../zk-paillier"}
-# centipede = { path="../../../centipede"}
-# paillier = { git = "https://github.com/vhnatyk/rust-paillier", branch = "vhnat/mpecdsa-core" }
-# zk-paillier = { git = "https://github.com/vhnatyk/zk-paillier" }
-# centipede = { git = "https://github.com/vhnatyk/centipede"}
 paillier = { git = "https://github.com/KZen-networks/rust-paillier", tag = "v0.3.4"}
 zk-paillier = { git = "https://github.com/KZen-networks/zk-paillier", tag = "v0.2.8"}
 subtle = { version = "2" }
 serde = { version = "1.0", features = ["derive"] }
 zeroize = "0.10.1"
 
-
-
-# hex = "0.3.2"
-# subtle = {version = "2", features = ["nightly"]}
-# serde = "1.0"
-# serde_derive = "1.0"
-# serde_json = "1.0"
-# reqwest = {version = "0.9.5", default-features = false}
-# rocket = "0.4.0"
-# rocket_contrib = "0.4.0"
-# uuid = { version = "0.7", features = ["v4"] }
-# rust-crypto = "^0.2"
-# cryptoxide="0.1.1"
-# curv = { version = "0.1.0", features = ["ec_secp256k1"], path = "C:/Projects/Repos/Kzen/curv" }
-# curv = { version = "0.1.0", features = ["ec_secp256k1"], git = "https://github.com/vhnatyk/curv", branch="vhnat/mpecdsa_core_extraction" }
-
 [dependencies.curv]
-git = "https://github.com/KZen-networks/curv"
-tag = "v0.2.3"
+git = "https://github.com/vhnatyk/curv"
+branch="dev/vhnat/gg_core"
+# tag = "v0.2.3"
 features = ["ec_secp256k1"]
 
-# tag = "v0.2.2"
-
-# [dependencies.curv]
-# # git = "https://github.com/KZen-networks/curv"
-# path = "../../curv"
-# features =  ["ec_secp256k1"]
-[dependencies.class_group]
-git = "https://github.com/KZen-networks/class"
-tag = "v0.4.4"
-optional = true
-
 [dev-dependencies]
-criterion = "0.3"
-rust-crypto = "0.2"
-hex = "0.4"
-rocket = { version = "0.4.2", default-features = false }
-rocket_contrib = "0.4.2"
-reqwest = { version = "0.9", default-features = false }
-uuid = { version = "0.8", features = ["v4"] }
 serde_json = "1.0"
 libsecp256k1 = "0.3.2"
 
@@ -97,56 +52,11 @@ rust-gmp = { version = "0.5.0", features = ["serde_support"], git = "https://git
 git = "https://github.com/KZen-networks/centipede"
 tag = "v0.2.2"
 
-[patch."https://github.com/KZen-networks/rust-gmp"]
-rust-gmp = { path="C:/Projects/Repos/rust-gmp_kzen" }
-# rust-gmp = { version = "0.5.0", features = ["serde_support"], git = "https://github.com/KZen-networks/rust-gmp" }
-# std = { path = "./lib-minstd" }
+[patch."https://github.com/KZen-networks/curv"]
+curv = { git="https://github.com/vhnatyk/curv", branch="dev/vhnat/gg_core" }
 
-[patch."https://github.com/vhnatyk/rust-secp256k1"]
-secp256k1 = { version = "0.17.2", features = ["rand", "serde"], path="C:/Projects/Repos/rust-secp256k1" }
-
-[patch."https://github.com/vhnatyk/curv"]
-curv = { path="C:/Projects/Repos/kzen/curv" }
-
-[[example]]
-name = "sm_manager"
-
-[[example]]
-name = "gg18_sign_client"
-
-[[example]]
-name = "gg18_keygen_client"
-
-[[example]]
-name = "common"
-crate-type = ["lib"]
-
-[[bench]]
-name = "cclst_keygen"
-path = "benches/two_party_ecdsa/cclst_2019/keygen.rs"
-required-features = ["cclst"]
-harness = false
-
-[[bench]]
-name = "cclst_sign"
-path = "benches/two_party_ecdsa/cclst_2019/sign.rs"
-required-features = ["cclst"]
-harness = false
-
-[[bench]]
-name = "gg18"
-path = "benches/multi_party_ecdsa/gg18/keygen.rs"
-harness = false
-
-[[bench]]
-name = "lindel2017_keygen"
-path = "benches/two_party_ecdsa/lindell_2017/keygen.rs"
-harness = false
-
-[[bench]]
-name = "lindel2017_sign"
-path = "benches/two_party_ecdsa/lindell_2017/sign.rs"
-harness = false
+# [patch."https://github.com/vhnatyk/curv"]
+# curv = { path="c:/projects/repos/kzen/curv" }
 
 [profile.dev]
 # panic = 'abort'
