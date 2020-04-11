@@ -1,6 +1,7 @@
 // For integration tests, please add your tests in /tests instead
 
-use crate::protocols::two_party_ecdsa::lindell_2017::{party_one, party_two};
+use super::party_two::HSMCLPublic;
+use super::*;
 use curv::arithmetic::traits::Samplable;
 use curv::elliptic::curves::traits::*;
 use curv::BigInt;
@@ -24,7 +25,6 @@ fn test_d_log_proof_party_two_party_one() {
 }
 
 #[test]
-
 fn test_full_key_gen() {
     let (party_one_first_message, comm_witness, ec_key_pair_party1) =
         party_one::KeyGenFirstMsg::create_commitments_with_fixed_secret_share(ECScalar::from(
@@ -46,78 +46,50 @@ fn test_full_key_gen() {
     )
     .expect("failed to verify commitments and DLog proof");
 
-    // init paillier keypair:
-    let paillier_key_pair =
-        party_one::PaillierKeyPair::generate_keypair_and_encrypted_share(&ec_key_pair_party1);
-
-    let party_one_private =
-        party_one::Party1Private::set_private_key(&ec_key_pair_party1, &paillier_key_pair);
-
-    let party_two_paillier = party_two::PaillierPublic {
-        ek: paillier_key_pair.ek.clone(),
-        encrypted_secret_share: paillier_key_pair.encrypted_share.clone(),
-    };
-
-    // zk proof of correct paillier key
-    let correct_key_proof =
-        party_one::PaillierKeyPair::generate_ni_proof_correct_key(&paillier_key_pair);
-    party_two::PaillierPublic::verify_ni_proof_correct_key(
-        correct_key_proof,
-        &party_two_paillier.ek,
-    )
-    .expect("bad paillier key");
-
-    //zk_pdl
-
-    let (party_two_pdl_first_message, mut party_two_pdl_state, party_two_pdl_statement) =
-        party_two_paillier.pdl_first_message(&party_one_second_message.comm_witness.public_share);
-
-    let (
-        party_one_pdl_first_message,
-        party_one_pdl_state,
-        _party_one_pdl_statment,
-        party_one_pdl_witness,
-    ) = party_one::PaillierKeyPair::pdl_first_message(
-        &party_one_private,
-        &party_two_pdl_first_message,
-        &paillier_key_pair,
+    // init HSMCL keypair:
+    let seed: BigInt = str::parse(
+            "314159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230664709384460955058223172535940812848"
+        ).unwrap();
+    let hsmcl_key_pair = party_one::HSMCLKeyPair::generate_keypair_and_encrypted_share(
+        &ec_key_pair_party1,
+        seed.clone(),
     );
 
-    let party_two_pdl_second_message = party_two::PaillierPublic::pdl_second_message(
-        &party_one_pdl_first_message,
-        &party_two_pdl_statement,
-        &mut party_two_pdl_state,
-    )
-    .expect("range proof error");
+    let party_one_private =
+        party_one::Party1Private::set_private_key(&ec_key_pair_party1, &hsmcl_key_pair);
 
-    let party_one_pdl_second_message = party_one::PaillierKeyPair::pdl_second_message(
-        &party_two_pdl_first_message,
-        &party_two_pdl_second_message,
-        &party_one_pdl_witness,
-        &party_one_pdl_state,
-    )
-    .expect("pdl error from party2 pdl");
-
-    party_two::PaillierPublic::pdl_finalize(
-        &party_one_pdl_first_message,
-        &party_one_pdl_second_message,
-        &party_two_pdl_state,
-    )
-    .expect("pdl_error");
+    let cldl_proof = party_one::HSMCLKeyPair::generate_zkcldl_proof(
+        &hsmcl_key_pair,
+        &party_one_private,
+        seed.clone(),
+    );
+    let _party_two_hsmcl_pub =
+        party_two::HSMCLPublic::verify_zkcldl_proof(cldl_proof).expect("proof error");
 }
 
 #[test]
 fn test_two_party_sign() {
     // assume party1 and party2 engaged with KeyGen in the past resulting in
-    // party1 owning private share and paillier key-pair
-    // party2 owning private share and paillier encryption of party1 share
+    // party1 owning private share and HSMCL key-pair
+    // party2 owning private share and HSMCL encryption of party1 share
     let (_party_one_private_share_gen, _comm_witness, ec_key_pair_party1) =
         party_one::KeyGenFirstMsg::create_commitments();
     let (party_two_private_share_gen, ec_key_pair_party2) = party_two::KeyGenFirstMsg::create();
 
-    let keypair =
-        party_one::PaillierKeyPair::generate_keypair_and_encrypted_share(&ec_key_pair_party1);
+    let seed: BigInt = str::parse(
+        "314159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230664709384460955058223172535940812848"
+    ).unwrap();
 
+    let party_one_hsmcl_key_pair =
+        party_one::HSMCLKeyPair::generate_keypair_and_encrypted_share(&ec_key_pair_party1, seed);
+
+    let party1_private =
+        party_one::Party1Private::set_private_key(&ec_key_pair_party1, &party_one_hsmcl_key_pair);
+
+    let party_two_hsmcl_public = HSMCLPublic::set(
+        &party_one_hsmcl_key_pair.keypair.pk,
+        &party_one_hsmcl_key_pair.encrypted_share,
+    );
     // creating the ephemeral private shares:
 
     let (eph_party_two_first_message, eph_comm_witness, eph_ec_key_pair_party2) =
@@ -138,20 +110,18 @@ fn test_two_party_sign() {
         .expect("failed to verify commitments and DLog proof");
     let party2_private = party_two::Party2Private::set_private_key(&ec_key_pair_party2);
     let message = BigInt::from(1234);
+
     let partial_sig = party_two::PartialSig::compute(
-        &keypair.ek,
-        &keypair.encrypted_share,
+        party_two_hsmcl_public,
         &party2_private,
         &eph_ec_key_pair_party2,
         &eph_party_one_first_message.public_share,
         &message,
     );
 
-    let party1_private = party_one::Party1Private::set_private_key(&ec_key_pair_party1, &keypair);
-
     let signature = party_one::Signature::compute(
         &party1_private,
-        &partial_sig.c3,
+        partial_sig.c3,
         &eph_ec_key_pair_party1,
         &eph_party_two_second_message.comm_witness.public_share,
     );

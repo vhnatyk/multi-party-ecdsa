@@ -11,3 +11,7 @@ target/
 
 .idea
 .DS_Store
+
+keys*.store
+signature
+
